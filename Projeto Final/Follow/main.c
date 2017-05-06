@@ -23,7 +23,7 @@ int main() {
         }
         
         /*  
-        Erro do PID com base na leitura dos sensores 
+        Erro do PID com base na leitura dos sensores 2, 3 e 4 (assumi que os outros não importam para o alinhamento)
             Negativo => virar para a direita
             Positivo => virar para a esquerda
             Zero => alinhado (situacao ideal)
