@@ -7,19 +7,31 @@
 #define VEL_INI 150
 
 int main() {
-    float Kd, Kp, Ki; //Constantes PID
-    float P = 0.0, I = 0.0, D = 0.0; // :)
+    float kd, kp, ki; //Constantes PID
+    float p = 0.0, i = 0.0, d = 0.0; // :)
     float erro = 0.0, erro_ant = 0.0; 
     int16_t velE, velD;
+    int curva = 0;
+    int volta = 0;
 
-    bool sensores[NUMSENSORS];
+    int sensores[NUMSENSORS];
 
 
 	for (;;) { 
 
         //Leitura dos sensores
-        for (int i = 0; i <= 6; i++) {
+        for (int i = 0; i <= NUMSENSORS; i++) {
             sensores[i] = (getLineSensor(i) >= BRANCO); // TRUE se detectar a linha  
+        }
+
+        //Sensor 6 indica inicio e fim do circuito
+        if (sensores[6] && !sensores[0]) {
+            volta++; //1 no inicio, 2 no final
+            if (volta == 2) {
+                for (;;) {
+                    motors (0,0);
+                }
+            }
         }
         
         /*  
@@ -44,13 +56,18 @@ int main() {
             erro = -2;
         }
 
+        //Deteccao de curva (apenas o sensor 0)
+        if (sensores[0] && !sensores[6]) {
+            curva = !curva; //1 no inicio da curva, 0 no final
+        }
+
         //P = Kp * (Target - Atual); Target == 0
         //I = Ki * (I + ERRO*TIME) => se continuar errado, o I aumenta com o tempo == melhor ajuste
         //D = Kd * ((ERRO) – (ERRO_ANT))/Time =>taxa de variacao do erro        
-        P = erro;   I += erro*getTick();    D = (erro - erro_ant)/getTick();
+        p = erro;   i += erro*getTick();    d = (erro - erro_ant)/getTick();
 
-        velD = VEL_INI + ((Kp*P) + (Ki*I) + (Kd*D));
-        velE = VEL_INI - ((Kp*P) + (Ki*I) + (Kd*D));
+        velD = VEL_INI + ((kp*p) + (ki*i) + (kd*d));
+        velE = VEL_INI - ((kp*p) + (ki*i) + (kd*d));
         //velocidades nao podem ultrapassar 255
         if (velE > 255) {
             velE = 255;
@@ -58,12 +75,14 @@ int main() {
         if (velD > 255) {
             velD = 255;
         }
-        motors (velE, velD);
 
+        if (curva) {
+            motors(velE/2, velD/2);
+        } else  {
+            motors (velE, velD);
+        }      
+        
         erro_ant = erro;
-
-
-
 
 
 		_delay_ms(10);
