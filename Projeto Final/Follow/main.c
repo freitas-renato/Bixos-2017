@@ -20,7 +20,7 @@ int main() {
 	for (;;) { 
 
         //Leitura dos sensores
-        for (int i = 0; i <= NUMSENSORS; i++) {
+        for (int i = 0; i < NUMSENSORS; i++) {
             sensores[i] = (getLineSensor(i) >= BRANCO); // TRUE se detectar a linha  
         }
 
