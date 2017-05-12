@@ -6,6 +6,18 @@
 #define BRANCO 700
 #define VEL_INI 150
 
+float getErro() {
+	float total_sensores = 0;
+	float total_ponderado = 0;
+	for (int i = 1; i <= 5; i ++) {
+		total_sensores += getLineSensor(i);
+		total_ponderado += getLineSensor(i) * i;		
+	}
+	float erro = (total_ponderado / total_sensores) - 3;
+	
+	return erro;
+}
+
 int main() {
     float kd, kp, ki; //Constantes PID
     float p = 0.0, i = 0.0, d = 0.0; // :)
@@ -40,7 +52,7 @@ int main() {
             Positivo => virar para a esquerda
             Zero => alinhado (situacao ideal)
         */
-        if (sensores[2] && !sensores[3] && !sensores[4]) { //100
+        /*if (sensores[2] && !sensores[3] && !sensores[4]) { //100
             erro = 2;
         } else
         if (sensores[2] && sensores[3] && !sensores[4]) { //110
@@ -54,7 +66,9 @@ int main() {
         } else
         if (!sensores[2] && !sensores[3] && sensores[4]) { //001
             erro = -2;
-        }
+        }*/
+	
+	erro = getErro();
 
         //Deteccao de curva (apenas o sensor 0)
         if (sensores[0] && !sensores[6]) {
