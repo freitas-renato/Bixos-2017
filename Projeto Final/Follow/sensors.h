@@ -14,3 +14,4 @@ typedef enum {
 uint16_t getLineSensor(uint16_t sensor);
 int16_t getEncoder(encoder_t enc);
 int16_t getAccel(eixo_t eixo);
+float getErro();

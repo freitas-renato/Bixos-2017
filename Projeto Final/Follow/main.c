@@ -4,19 +4,7 @@
 
 #define NUMSENSORS 7
 #define BRANCO 700
-#define VEL_INI 150
-
-float getErro() {
-	float total_sensores = 0;
-	float total_ponderado = 0;
-	for (int i = 1; i <= 5; i ++) {
-		total_sensores += getLineSensor(i);
-		total_ponderado += getLineSensor(i) * i;		
-	}
-	float erro = (total_ponderado / total_sensores) - 3;
-	
-	return erro;
-}
+#define VEL_INI 255
 
 int main() {
     float kd, kp, ki; //Constantes PID
@@ -68,7 +56,7 @@ int main() {
             erro = -2;
         }*/
 	
-	erro = getErro();
+	    erro = getErro();
 
         //Deteccao de curva (apenas o sensor 0)
         if (sensores[0] && !sensores[6]) {
