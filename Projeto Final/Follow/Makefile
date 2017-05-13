@@ -8,25 +8,30 @@
 SOURCES = $(wildcard *.c)
 OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
-.PHONY: all clean flash main.elf main.hex #nao sei se posso/preciso colocar os dois "main." aqui
-
+.PHONY: all clean flash
 
 #Deixei os comandos aparecendo, colocar @ para "tirar"
-#Adicionar um 'help' (?)
 
 all: main.hex
+
+%.o: %.c
+	@echo "Compilando..."
+	avr-gcc -c $< -o $@ -mmcu=m8 -std=c99 -Wall -Wextra -Os
 
 clean:
 	@echo "Removendo arquivos..."
 	rm -f $(OBJECTS) *.hex *.elf
 
-%.o: %$(SOURCES)
-	@echo "Compilando..."
-	avr-gcc -c $< -o $@ -mmcu=m8 -std=c99 -Wall -Wextra -Os
-
 flash:	
 	@echo "Gravando na placa..."
 	avrdude -c usbasp -p m168 -U flash:w:main.hex:i
+
+help:
+	@echo "Makefile para AVR - Processo Seletivo ThundeRatz"
+	@echo "Comandos: "
+	@echo "all: 	compila todos os arquivos .c da pasta"
+	@echo "clean: 	remove os arquivos .o .hex e .elf"
+	@echo "flash: 	grava os arquivos no microcontrolador"
 
 main.elf: $(OBJECTS)
 	@echo "Compilando main.elf..."
